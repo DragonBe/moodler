@@ -21,13 +21,11 @@
                 <p>What is your mood today?</p>
             </div>
             <div class="row">
-                <div class="col-md-3">&nbsp;</div>
-                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'superhappy'}) }}" title="Super Happy">:-D</a></div>
-                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'happy'}) }}" title="Happy">:-)</a></div>
-                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'normal'}) }}" title="Normal">:-|</a></div>
-                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'sad'}) }}" title="Sad">:-(</a></div>
-                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'crying'}) }}" title="Crying">:'(</a></div>
-                <div class="col-md-4">&nbsp;</div>
+                <ul>
+                {% for mood in list %}
+                    <li>{{ mood.mood }} <span>{{ mood.count }} / {{ mood.total }}</span></li>
+                {% endfor %}
+                </ul>
             </div>
         </div>
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
