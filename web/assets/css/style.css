@@ -5,7 +5,7 @@ div.smiley {
 }
 
 div.superhappy, div.happy, div.normal, div.sad, div.crying {
-    background-image: url('../img/smiley_sprite.png');
+    background-image: url('/assets/img/smiley_sprite.png');
     background-attachment: scroll;
     background-repeat: no-repeat;
 }
