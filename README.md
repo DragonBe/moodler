@@ -5,6 +5,10 @@ Not each day is the same and sometimes the day's not yours. But remember, every 
 
 Integrate this tool into your own applications or have it on display in your office. Let's be honest, these faces are just adorable to be touched.
 
+[![Moodler start page](http://plopster.blob.core.windows.net/moodler/Moodler_Start.png)](http://in2.se/moodler)
+
+[![Moodler stats page](http://plopster.blob.core.windows.net/moodler/Moodler_Stats.png)](http://in2.se/moodler)
+
 Go try it out yourself at [in2.se/moodler](http://in2.se/moodler).
 
 # Roadmap
