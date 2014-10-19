@@ -112,9 +112,10 @@ class Mood
         $stmt->bindParam(2, $mood);
         $success = $stmt->execute();
         if(false === $success) {
-            $updateSql = 'UPDATE `mood_count` SET `count` = `count` + 1, `modified` = NOW() WHERE `moodId` = ? AND DATE(`created`) LIKE DATE(NOW())';
+            $updateSql = 'UPDATE `mood_count` SET `count` = `count` + 1, `modified` = NOW() WHERE `moodId` = ? AND `mood` LIKE ? AND DATE(`created`) LIKE DATE(NOW())';
             $update = $this->getPdo()->prepare($updateSql);
             $update->bindParam(1, $moodId);
+            $update->bindParam(2, $mood);
             $updateSuccess = $update->execute();
             if (false === $updateSuccess) {
                 throw new \RuntimeException('Cannot store the mood at this point');
