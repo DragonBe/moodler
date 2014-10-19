@@ -9,7 +9,7 @@ defined('APP_ENV') ||
     define('APP_ENV', isset ($_SERVER['APP_ENV']) ? $_SERVER['APP_ENV'] : 'production');
 
 ini_set('display_errors', 1);
-ini_set('error_display', -1);
+ini_set('error_display', E_ALL|E_STRICT);
 
 $basepath = '/localhost/moodler/web';
 $app = new \Silex\Application();
