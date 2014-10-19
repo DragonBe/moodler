@@ -50,7 +50,6 @@ $app->get('/mood/{mood}', function ($mood) use ($app, $config, $client) {
     } catch (\RuntimeException $e) {
         $client->captureException($e);
     }
-    $client->captureMessage('Registration of a new mood: ' . $mood);
     $path = $app['url_generator']->generate('today');
     return $app->redirect($path, 302);
 })

@@ -31,3 +31,22 @@ div.crying {
 .moodler-orange {
     color: #e59500;
 }
+
+#progressbar {
+    background-color: black;
+    border-radius: 13px; /* (height of inner div) / 2 + padding */
+    padding: 3px;
+    margin-top: 5px;
+}
+
+#progressbar > div {
+    background-color: orange;
+    width: 40%; /* Adjust with JavaScript */
+    height: 40px;
+    border-radius: 10px;
+}
+
+.middle-line {
+    padding: 15px 0;
+    font-size: large;
+}

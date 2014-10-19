@@ -25,8 +25,12 @@
             <div class="row">
                 <div class="col-md-3">&nbsp;</div>
                 <div class="col-md-1 text-center"><div class="smiley {{ mood.mood }}">&nbsp;</div></div>
-                <div class="col-md-4">{{ mood.count }} / {{ mood.total }}</div>
-                <div class="col-md-3">&nbsp;{{ (mood.total / 100 * mood.count) * 100 }}%</div>
+                <div class="col-md-4">
+                    <div id="progressbar">
+                        <div style="width: {{ ((mood.count / mood.total) * 100)|number_format(0,'.',',') }}%"></div>
+                    </div>
+                </div>
+                <div class="col-md-3 middle-line">&nbsp;{{ ((mood.count / mood.total) * 100)|number_format(0,'.',',') }}%</div>
             </div>
             {% endfor %}
         </div>
