@@ -27,10 +27,10 @@
                 <div class="col-md-1 text-center"><div class="smiley {{ mood.mood }}">&nbsp;</div></div>
                 <div class="col-md-4">
                     <div id="progressbar">
-                        <div style="width: {{ ((mood.count / mood.total) * 100)|number_format(0,'.',',') }}%"></div>
+                        <div style="width: {% if mood.count != 0 %}{{ ((mood.count / mood.total) * 100)|number_format(0,'.',',') }}{% else %}0{% endif %}%"></div>
                     </div>
                 </div>
-                <div class="col-md-3 middle-line">&nbsp;{{ ((mood.count / mood.total) * 100)|number_format(0,'.',',') }}%</div>
+                <div class="col-md-3 middle-line">&nbsp;{% if mood.count != 0 %}{{ ((mood.count / mood.total) * 100)|number_format(0,'.',',') }}{% else %}0{% endif %}%</div>
             </div>
             {% endfor %}
         </div>
