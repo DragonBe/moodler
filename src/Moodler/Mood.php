@@ -124,7 +124,7 @@ class Mood
     public function getMoods()
     {
         $org = $this->getOrganisation();
-        $sql = 'SELECT *, (SELECT SUM(`count`) FROM moodler.mood_count WHERE DATE(`created`) LIKE DATE(NOW())) AS `total` FROM `mood` LEFT JOIN `mood_count` USING(`moodId`) WHERE `org` LIKE ? AND DATE(`created`) LIKE DATE(NOW())';
+        $sql = 'SELECT *, (SELECT SUM(`count`) FROM `mood_count` WHERE DATE(`created`) LIKE DATE(NOW())) AS `total` FROM `mood` LEFT JOIN `mood_count` USING(`moodId`) WHERE `org` LIKE ? AND DATE(`created`) LIKE DATE(NOW())';
         $stmt = $this->getPdo()->prepare($sql);
         $stmt->bindParam(1, $org);
         $stmt->execute();
