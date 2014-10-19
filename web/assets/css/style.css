@@ -1,3 +1,6 @@
+a, a:hover {
+    text-decoration: none;
+}
 div.smiley {
     display: block;
     width: 82px;
@@ -24,4 +27,7 @@ div.sad {
 }
 div.crying {
     background-position: -487px -13px;
+}
+.moodler-orange {
+    color: #e59500;
 }

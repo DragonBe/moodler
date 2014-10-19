@@ -21,7 +21,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     public function testConfigRejectsNonExistingFile()
     {
         $config = new Config();
-        $config->load('foo');
+        $config->load('foo', 'production');
     }
     /**
      * @expectedException \RuntimeException
@@ -35,7 +35,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         touch($file);
         chmod($file, 0000);
         $config = new Config();
-        $config->load($file);
+        $config->load($file, 'production');
     }
 
     /**
@@ -48,13 +48,13 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     {
         $file = __DIR__ . '/_files/config.foo';
         $config = new Config();
-        $config->load($file);
+        $config->load($file, 'production');
     }
 
     public function testCanLoadConfiguration()
     {
         $config = new Config();
-        $config->load(__DIR__ . '/_files/config.ini');
+        $config->load(__DIR__ . '/_files/config.ini', 'production');
         $this->assertSame('mysqli:host=127.0.0.1;dbname=moodler', $config->getDsn());
         $this->assertSame('moodler', $config->getUsername());
         $this->assertSame('moodler', $config->getPassword());
