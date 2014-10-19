@@ -93,33 +93,68 @@ class Mood
     public function storeMood($mood)
     {
         $org = $this->getOrganisation();
-        $allowedMoods = array (
+        $allowedMoods = $this->getAvailableMoods();
+        if (!in_array($mood, $allowedMoods)) {
+            throw new \InvalidArgumentException(
+                sprintf('%s is not a valid mood', $mood)
+            );
+        }
+        $moodId = $this->getMoodId($org);
+
+        $sql = 'INSERT INTO `mood_count` (`moodId`, `mood`, `count`, `created`, `modified`) VALUES (?, ?, 1, NOW(), NOW())';
+        $stmt = $this->getPdo()->prepare($sql);
+        $stmt->bindParam(1, $moodId);
+        $stmt->bindParam(2, $mood);
+        $success = $stmt->execute();
+        if(false === $success) {
+            $updateSql = 'UPDATE `mood_count` SET `count` = `count` + 1, `modified` = NOW() WHERE `moodId` = ? AND DATE(`created`) LIKE DATE(NOW())';
+            $update = $this->getPdo()->prepare($updateSql);
+            $update->bindParam(1, $moodId);
+            $update->execute();
+        }
+    }
+    public function getMoods()
+    {
+        $org = $this->getOrganisation();
+        $sql = 'SELECT *, (SELECT SUM(`count`) FROM moodler.mood_count WHERE DATE(`created`) LIKE DATE(NOW())) AS `total` FROM `mood` LEFT JOIN `mood_count` USING(`moodId`) WHERE `org` LIKE ? AND DATE(`created`) LIKE DATE(NOW())';
+        $stmt = $this->getPdo()->prepare($sql);
+        $stmt->bindParam(1, $org);
+        $stmt->execute();
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $moodList = array ();
+        foreach ($this->getAvailableMoods() as $mood) {
+            $item = new Count(array (
+                'mood' => $mood,
+                'count' => 0,
+                'total' => 0
+            ));
+            foreach ($result as $entry) {
+                if ($mood === $entry['mood']) {
+                    $item = new Count($entry);
+                }
+            }
+            $moodList[] = $item;
+        }
+        return array_reverse($moodList);
+    }
+    protected function getMoodId($org)
+    {
+        $sql = 'SELECT `moodId` FROM `mood` WHERE `org` LIKE ?';
+        $stmt = $this->getPdo()->prepare($sql);
+        $stmt->bindParam(1, $org);
+        $stmt->execute();
+        $result = $stmt->fetchColumn(0);
+        return $result;
+    }
+
+    protected function getAvailableMoods()
+    {
+        return array (
             self::MOOD_CRY,
             self::MOOD_SAD,
             self::MOOD_NORM,
             self::MOOD_HAPPY,
             self::MOOD_SUPER,
         );
-        if (!in_array($mood, $allowedMoods)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s is not a valid mood', $mood)
-            );
-        }
-        $sql = 'UPDATE `mood` SET `count` = `count` + 1 WHERE `mood` LIKE ? AND `org` LIKE ?';
-        $stmt = $this->getPdo()->prepare($sql);
-        $stmt->bindParam(1, $mood);
-        $stmt->bindParam(2, $org);
-        $stmt->execute();
-    }
-    public function getMoods()
-    {
-        $org = $this->getOrganisation();
-        $sql = 'SELECT `mood`,`count`, (SELECT SUM(`count`) FROM `mood` WHERE `org` LIKE ?) AS `total` FROM `mood` WHERE `org` LIKE ?';
-        $stmt = $this->getPdo()->prepare($sql);
-        $stmt->bindParam(1, $org);
-        $stmt->bindParam(2, $org);
-        $stmt->execute();
-        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        return $result;
     }
 } 
