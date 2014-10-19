@@ -24,6 +24,10 @@ class Config
      * @var string The DB password
      */
     protected $password;
+    /**
+     * @var string The URL for connecting with Sentry Error handler
+     */
+    protected $sentryUrl;
 
     /**
      * @param string $configFile
@@ -63,6 +67,7 @@ class Config
             'db.dsn'      => 'setDsn',
             'db.username' => 'setUsername',
             'db.password' => 'setPassword',
+            'sentry.url'  => 'setSentryUrl',
         );
 
         foreach ($params as $key => $method) {
@@ -120,4 +125,19 @@ class Config
         $this->password = $password;
     }
 
-} 
+    /**
+     * @return string
+     */
+    public function getSentryUrl()
+    {
+        return $this->sentryUrl;
+    }
+
+    /**
+     * @param string $sentryUrl
+     */
+    public function setSentryUrl($sentryUrl)
+    {
+        $this->sentryUrl = $sentryUrl;
+    }
+}

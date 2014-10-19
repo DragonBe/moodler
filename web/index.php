@@ -5,10 +5,15 @@ use \Symfony\Component\HttpFoundation\ParameterBag;
 
 require_once '../vendor/autoload.php';
 
+date_default_timezone_set('Europe/Brussels');
+
 defined('APP_ENV') ||
     define('APP_ENV', isset ($_SERVER['APP_ENV']) ? $_SERVER['APP_ENV'] : 'production');
 
-$client = new Raven_Client('https://cf9f4d8b9ff643eb96b3ac019211d732:173bf2a133144fd0a4f93a4f1a361839@app.getsentry.com/31069');
+$config = new \Moodler\Config(__DIR__ . '/../config/config.ini', APP_ENV);
+
+$client = new Raven_Client($config->getSentryUrl());
+
 $error_handler = new Raven_ErrorHandler($client);
 // Register error handler callbacks
 set_error_handler(array($error_handler, 'handleError'));
@@ -36,18 +41,22 @@ $app->get('/', function () use ($app) {
 })
 ->bind('home');
 
-$app->get('/mood/{mood}', function ($mood) use ($app) {
-
-    $config = new \Moodler\Config(__DIR__ . '/../config/config.ini', APP_ENV);
+$app->get('/mood/{mood}', function ($mood) use ($app, $config, $client) {
     $moodler = new \Moodler\Mood($config);
-    $moodler->storeMood($mood);
+    try {
+        $moodler->storeMood($mood);
+    } catch (\InvalidArgumentException $e) {
+        $client->captureException($e);
+    } catch (\RuntimeException $e) {
+        $client->captureException($e);
+    }
+    $client->captureMessage('Registration of a new mood: ' . $mood);
     $path = $app['url_generator']->generate('today');
     return $app->redirect($path, 302);
 })
 ->bind('moodget');
 
-$app->get('/today', function() use ($app) {
-    $config = new \Moodler\Config(__DIR__ . '/../config/config.ini', APP_ENV);
+$app->get('/today', function() use ($app, $config, $client) {
     $mood = new \Moodler\Mood($config);
     $list = $mood->getMoods();
     return $app['twig']->render('list.twig', array (

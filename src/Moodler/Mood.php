@@ -90,6 +90,11 @@ class Mood
         $this->organisation = $organisation;
     }
 
+    /**
+     * @param string $mood The mood to be stored
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     */
     public function storeMood($mood)
     {
         $org = $this->getOrganisation();
@@ -110,7 +115,10 @@ class Mood
             $updateSql = 'UPDATE `mood_count` SET `count` = `count` + 1, `modified` = NOW() WHERE `moodId` = ? AND DATE(`created`) LIKE DATE(NOW())';
             $update = $this->getPdo()->prepare($updateSql);
             $update->bindParam(1, $moodId);
-            $update->execute();
+            $updateSuccess = $update->execute();
+            if (false === $updateSuccess) {
+                throw new \RuntimeException('Cannot store the mood at this point');
+            }
         }
     }
     public function getMoods()
