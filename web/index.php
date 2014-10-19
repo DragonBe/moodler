@@ -5,6 +5,9 @@ use \Symfony\Component\HttpFoundation\ParameterBag;
 
 require_once '../vendor/autoload.php';
 
+defined('APP_ENV') ||
+    define('APP_ENV', isset ($_SERVER['APP_ENV']) ? $_SERVER['APP_ENV'] : 'production');
+
 $basepath = '/localhost/moodler/web';
 $app = new \Silex\Application();
 
@@ -29,7 +32,7 @@ $app->get('/', function () use ($app) {
 
 $app->get('/mood/{mood}', function ($mood) use ($app) {
 
-    $config = new \Moodler\Config(__DIR__ . '/../config/config.ini');
+    $config = new \Moodler\Config(__DIR__ . '/../config/config.ini', APP_ENV);
     $moodler = new \Moodler\Mood($config);
     $moodler->storeMood($mood);
     //return $app->json(array ('mood' => $mood),201);
@@ -47,7 +50,7 @@ $app->post('/mood', function (Request $request) use ($app) {
 ->bind('mood');
 
 $app->get('/today', function() use ($app) {
-    $config = new \Moodler\Config(__DIR__ . '/../config/config.ini');
+    $config = new \Moodler\Config(__DIR__ . '/../config/config.ini', APP_ENV);
     $mood = new \Moodler\Mood($config);
     $list = $mood->getMoods();
     return $app['twig']->render('list.twig', array (

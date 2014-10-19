@@ -28,17 +28,17 @@ class Config
     /**
      * @param string $configFile
      */
-    public function __construct($configFile = null)
+    public function __construct($configFile = null, $env = 'production')
     {
         if (null !== $configFile) {
-            $this->load($configFile);
+            $this->load($configFile, $env);
         }
     }
 
     /**
      * @param string $configFile
      */
-    public function load($configFile)
+    public function load($configFile, $env)
     {
         if (!is_file($configFile)) {
             throw new \InvalidArgumentException(
@@ -50,14 +50,14 @@ class Config
                 sprintf('%s is not readable', (string) $configFile)
             );
         }
-        $config = parse_ini_file($configFile);
-        if (false === $config || array () === $config) {
+        $config = parse_ini_file($configFile, $env);
+        if (!isset ($config[$env]) || false === $config || array () === $config) {
             throw new \RuntimeException(
                 sprintf('Cannot parse %s', $configFile)
             );
         }
 
-        $this->config = $config;
+        $this->config = $config[$env];
 
         $params = array (
             'db.dsn'      => 'setDsn',
@@ -66,8 +66,8 @@ class Config
         );
 
         foreach ($params as $key => $method) {
-            if (isset ($config[$key])) {
-                $this->$method($config[$key]);
+            if (isset ($this->config[$key])) {
+                $this->$method($this->config[$key]);
             }
         }
     }
