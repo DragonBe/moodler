@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="assets/css/style.css">
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -22,11 +23,11 @@
             </div>
             <div class="row">
                 <div class="col-md-3">&nbsp;</div>
-                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'superhappy'}) }}" title="Super Happy">:-D</a></div>
-                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'happy'}) }}" title="Happy">:-)</a></div>
-                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'normal'}) }}" title="Normal">:-|</a></div>
-                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'sad'}) }}" title="Sad">:-(</a></div>
-                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'crying'}) }}" title="Crying">:'(</a></div>
+                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'superhappy'}) }}" title="Super Happy"><div class="smiley superhappy">&nbsp;</div></a></div>
+                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'happy'}) }}" title="Happy"><div class="smiley happy">&nbsp;</div></a></div>
+                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'normal'}) }}" title="Normal"><div class="smiley normal">&nbsp;</div></a></div>
+                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'sad'}) }}" title="Sad"><div class="smiley sad">&nbsp;</div></a></div>
+                <div class="col-md-1 text-center"><a href="{{ app.url_generator.generate('moodget', {'mood':'crying'}) }}" title="Crying"><div class="smiley crying">&nbsp;</div></a></div>
                 <div class="col-md-4">&nbsp;</div>
             </div>
         </div>

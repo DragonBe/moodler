@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="assets/css/style.css">
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -20,13 +21,14 @@
                 <h1>Hello</h1>
                 <p>What is your mood today?</p>
             </div>
+            {% for mood in list %}
             <div class="row">
-                <ul>
-                {% for mood in list %}
-                    <li>{{ mood.mood }} <span>{{ mood.count }} / {{ mood.total }}</span></li>
-                {% endfor %}
-                </ul>
+                <div class="col-md-3">&nbsp;</div>
+                <div class="col-md-1 text-center"><div class="smiley {{ mood.mood }}">&nbsp;</div></div>
+                <div class="col-md-4">{{ mood.count }} / {{ mood.total }}</div>
+                <div class="col-md-3">&nbsp;{{ (mood.total / 100 * mood.count) * 100 }}%</div>
             </div>
+            {% endfor %}
         </div>
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>

@@ -1,0 +1,27 @@
+div.smiley {
+    display: block;
+    width: 82px;
+    height: 82px;
+}
+
+div.superhappy, div.happy, div.normal, div.sad, div.crying {
+    background-image: url('../img/smiley_sprite.png');
+    background-attachment: scroll;
+    background-repeat: no-repeat;
+}
+
+div.superhappy {
+    background-position: -487px -403px;
+}
+div.happy {
+    background-position: -368px -403px;
+}
+div.normal {
+    background-position: -19px -403px;
+}
+div.sad {
+    background-position: -137px -403px;
+}
+div.crying {
+    background-position: -487px -13px;
+}
