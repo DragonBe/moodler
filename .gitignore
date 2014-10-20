@@ -2,3 +2,4 @@
 vendor/
 build/
 config/config.ini
+logs/*.log

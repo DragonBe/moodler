@@ -19,10 +19,13 @@ $error_handler = new Raven_ErrorHandler($client);
 set_error_handler(array($error_handler, 'handleError'));
 set_exception_handler(array($error_handler, 'handleException'));
 
+$logfile = __DIR__ . sprintf('/../logs/moodler-%d.log', date('Ym'));
+$logger = new \Moodler\Logger($logfile, \Moodler\Logger::LOG_LEVEL_DEBUG);
+
 $basepath = '/localhost/moodler/web';
 $app = new \Silex\Application();
 
-$app['debug'] = true;
+$app['debug'] = false;
 
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
@@ -41,8 +44,9 @@ $app->get('/', function () use ($app) {
 })
 ->bind('home');
 
-$app->get('/mood/{mood}', function ($mood) use ($app, $config, $client) {
+$app->get('/mood/{mood}', function ($mood) use ($app, $config, $client, $logger) {
     $moodler = new \Moodler\Mood($config);
+    $moodler->setLogger($logger);
     try {
         $moodler->storeMood($mood);
     } catch (\InvalidArgumentException $e) {
@@ -55,8 +59,9 @@ $app->get('/mood/{mood}', function ($mood) use ($app, $config, $client) {
 })
 ->bind('moodget');
 
-$app->get('/today', function() use ($app, $config, $client) {
+$app->get('/today', function() use ($app, $config, $client, $logger) {
     $mood = new \Moodler\Mood($config);
+    $mood->setLogger($logger);
     $list = $mood->getMoods();
     return $app['twig']->render('list.twig', array (
         'list' => $list,

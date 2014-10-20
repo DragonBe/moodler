@@ -29,6 +29,11 @@ class Mood
     protected $pdo;
 
     /**
+     * @var Logger $logger A logging tool that allows us to track what's going on
+     */
+    protected $logger;
+
+    /**
      * @var string $organisation The default organisation for this mood
      */
     protected $organisation;
@@ -38,6 +43,7 @@ class Mood
         if (null !== $config) {
             $this->setConfig($config);
         }
+        $this->setLogger(new Logger());
         $this->setOrganisation($organisation);
     }
 
@@ -75,6 +81,24 @@ class Mood
     }
 
     /**
+     * @return Logger
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
+     * @param Logger $logger
+     * @return \Moodler\Mood
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getOrganisation()
@@ -98,26 +122,33 @@ class Mood
     public function storeMood($mood)
     {
         $org = $this->getOrganisation();
+        $this->getLogger()->info(sprintf('Storing mood "%s" for "%s"', $mood, $org));
         $allowedMoods = $this->getAvailableMoods();
         if (!in_array($mood, $allowedMoods)) {
+            $this->getLogger()->crit(sprintf('Unaccepted mood %s', $mood));
             throw new \InvalidArgumentException(
                 sprintf('%s is not a valid mood', $mood)
             );
         }
         $moodId = $this->getMoodId($org);
+        $this->getLogger()->debug(sprintf('Found %d for %s', $moodId, $org));
 
-        $sql = 'INSERT INTO `mood_count` (`moodId`, `mood`, `count`, `created`, `modified`) VALUES (?, ?, 1, NOW(), NOW())';
+        $sql = 'INSERT INTO `mood_count` (`moodId`, `mood`, `date`, `count`, `created`, `modified`) VALUES (?, ?, DATE(NOW()), 1, NOW(), NOW())';
         $stmt = $this->getPdo()->prepare($sql);
         $stmt->bindParam(1, $moodId);
         $stmt->bindParam(2, $mood);
         $success = $stmt->execute();
+        $this->getLogger()->debug(sprintf('Executed "%s" with result [%s]', $stmt->queryString, $success ? 'true' : 'false'));
+
         if(false === $success) {
-            $updateSql = 'UPDATE `mood_count` SET `count` = `count` + 1, `modified` = NOW() WHERE `moodId` = ? AND `mood` LIKE ? AND DATE(`created`) LIKE DATE(NOW())';
+            $updateSql = 'UPDATE `mood_count` SET `count` = `count` + 1, `modified` = NOW() WHERE `moodId` = ? AND `mood` LIKE ? AND `date` LIKE DATE(NOW())';
             $update = $this->getPdo()->prepare($updateSql);
             $update->bindParam(1, $moodId);
             $update->bindParam(2, $mood);
             $updateSuccess = $update->execute();
+            $this->getLogger()->debug(sprintf('Executed "%s" with result [%s]', $update->queryString, $updateSuccess ? 'true' : 'false'));
             if (false === $updateSuccess) {
+                $this->getLogger->crit(sprintf('DB Failure: %s', var_export($update->errorInfo(),1)));
                 throw new \RuntimeException('Cannot store the mood at this point');
             }
         }
@@ -125,10 +156,12 @@ class Mood
     public function getMoods()
     {
         $org = $this->getOrganisation();
-        $sql = 'SELECT *, (SELECT SUM(`count`) FROM `mood_count` WHERE DATE(`created`) LIKE DATE(NOW())) AS `total` FROM `mood` LEFT JOIN `mood_count` USING(`moodId`) WHERE `org` LIKE ? AND DATE(`created`) LIKE DATE(NOW())';
+        $this->getLogger()->debug(sprintf('Found organisation %s', $org));
+        $sql = 'SELECT *, (SELECT SUM(`count`) FROM `mood_count` WHERE `date` LIKE DATE(NOW())) AS `total` FROM `mood` LEFT JOIN `mood_count` USING(`moodId`) WHERE `org` LIKE ? AND `date` LIKE DATE(NOW())';
         $stmt = $this->getPdo()->prepare($sql);
         $stmt->bindParam(1, $org);
         $stmt->execute();
+        $this->getLogger()->debug(sprintf('Executed "%s"', $stmt->queryString));
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $moodList = array ();
         foreach ($this->getAvailableMoods() as $mood) {
