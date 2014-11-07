@@ -3,13 +3,17 @@ use \Symfony\Component\HttpFoundation\Request;
 use \Symfony\Component\HttpFoundation\Response;
 use \Symfony\Component\HttpFoundation\ParameterBag;
 
-require_once '../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 date_default_timezone_set('Europe/Brussels');
 
 defined('APP_ENV') ||
     define('APP_ENV', isset ($_SERVER['APP_ENV']) ? $_SERVER['APP_ENV'] : 'production');
 
+if (!file_exists(__DIR__ . '/../config/config.ini')) {
+    echo "Configuration not provisioned yet";
+    exit;
+}
 $config = new \Moodler\Config(__DIR__ . '/../config/config.ini', APP_ENV);
 
 $client = new Raven_Client($config->getSentryUrl());
